@@ -18,7 +18,16 @@ public class RentACatImpl implements RentACat {
 	 */
 
 	public boolean returnCat(int id) {
-		// TODO
+		if (cats == null || cats.size() == 0) {
+			return false;
+		}
+
+		for (Cat cat : cats)
+			if (cat.getId() == id && cat.getRented()) {
+				cat.returnCat();
+				return true;
+			}
+
 		return false;
 	}
 
@@ -33,8 +42,23 @@ public class RentACatImpl implements RentACat {
 	 */
 
 	public boolean rentCat(int id) {
-		// TODO
-		return false;
+		boolean ret = false;
+
+		if (cats == null || cats.size() == 0) {
+			return ret;
+		}
+
+		Cat c = getCat(id);
+
+		if (c == null) {
+			// No cat of this ID exists, thus it is not available
+			return ret;
+		} else if (!c.getRented()) {
+			c.rentCat();
+			ret = true;
+		}
+
+		return ret;
 	}
 
 	/**
@@ -48,8 +72,19 @@ public class RentACatImpl implements RentACat {
 	 */
 
 	public String listCats() {
-		// TODO
-		return "WRITE CODE FOR THIS";
+		String ret = "";
+
+		if (cats == null || cats.size() == 0) {
+			return ret;
+		}
+
+		for (Cat c : cats) {
+			String catInfo = c.toString();
+			catInfo += "\n";
+			ret += catInfo;
+		}
+
+		return ret;
 	}
 
 	/**
@@ -62,7 +97,13 @@ public class RentACatImpl implements RentACat {
 	 */
 
 	public boolean catExists(int id) {
-		// TODO
+		if (cats == null || cats.size() == 0)
+			return false;
+
+		for (Cat cat : cats)
+			if (cat.getId() == id)
+				return true;
+
 		return false;
 	}
 
@@ -76,16 +117,14 @@ public class RentACatImpl implements RentACat {
 	 */
 
 	public boolean catAvailable(int id) {
-
 		// null / zero-element check
 		if (cats == null || cats.size() == 0) {
 			return false;
 		}
+
 		Cat c = getCat(id);
-		if (c == null) {
+		if (c == null || c.getRented()) {
 			// No cat of this ID exists, thus it is not available
-			return false;
-		} else if (c.getRented()) {
 			// This cat exists, but has already been rented
 			return false;
 		}
@@ -93,7 +132,6 @@ public class RentACatImpl implements RentACat {
 		// If cat exists and is not rented, then the cat
 		// is available to rent
 		return true;
-
 	}
 
 	/**
@@ -105,7 +143,6 @@ public class RentACatImpl implements RentACat {
 	 */
 
 	public Cat getCat(int id) {
-
 		// null / zero-element check
 		if (cats == null || cats.size() == 0) {
 			return null;
@@ -165,66 +202,66 @@ public class RentACatImpl implements RentACat {
 			try {
 				option = sc.nextInt();
 				switch (option) {
-				case 1:
-					System.out.println("Cats for Rent");
-					System.out.print(rc.listCats());
-					break;
-				case 2:
-					validCat = false;
-					int catIdToRent;
-					while (!validCat) {
-						System.out.print("Rent which cat? > ");
-						try {
-							catIdToRent = sc.nextInt();
-							Cat c = rc.getCat(catIdToRent);
-							if (c == null) {
-								throw new NumberFormatException();
-							} else if (c.getRented()) {
-								System.out.println("Sorry, " + c.getName() + " is not here!");
-							} else {
-								rc.rentCat(catIdToRent);
-								System.out.println(c.getName() + " has been rented.");
-								validCat = true;
+					case 1:
+						System.out.println("Cats for Rent");
+						System.out.print(rc.listCats());
+						break;
+					case 2:
+						validCat = false;
+						int catIdToRent;
+						while (!validCat) {
+							System.out.print("Rent which cat? > ");
+							try {
+								catIdToRent = sc.nextInt();
+								Cat c = rc.getCat(catIdToRent);
+								if (c == null) {
+									throw new NumberFormatException();
+								} else if (c.getRented()) {
+									System.out.println("Sorry, " + c.getName() + " is not here!");
+								} else {
+									rc.rentCat(catIdToRent);
+									System.out.println(c.getName() + " has been rented.");
+									validCat = true;
+								}
+							} catch (NumberFormatException nfex) {
+								System.out.println("Invalid cat ID.");
+							} catch (Exception ex) {
+								System.out.println("Invalid cat ID.");
+								sc.next();
 							}
-						} catch (NumberFormatException nfex) {
-							System.out.println("Invalid cat ID.");
-						} catch (Exception ex) {
-							System.out.println("Invalid cat ID.");
-							sc.next();
 						}
-					}
-					break;
-				case 3:
-					validCat = false;
-					int catIdToReturn;
-					while (!validCat) {
-						System.out.print("Return which cat? > ");
-						try {
-							catIdToReturn = sc.nextInt();
-							Cat c = rc.getCat(catIdToReturn);
-							if (c == null) {
-								throw new NumberFormatException();
-							} else if (!c.getRented()) {
-								System.out.println(c.getName() + " is already here!");
-							} else {
-								rc.returnCat(catIdToReturn);
-								System.out.println("Welcome back," + c.getName() + "!");
-								validCat = true;
+						break;
+					case 3:
+						validCat = false;
+						int catIdToReturn;
+						while (!validCat) {
+							System.out.print("Return which cat? > ");
+							try {
+								catIdToReturn = sc.nextInt();
+								Cat c = rc.getCat(catIdToReturn);
+								if (c == null) {
+									throw new NumberFormatException();
+								} else if (!c.getRented()) {
+									System.out.println(c.getName() + " is already here!");
+								} else {
+									rc.returnCat(catIdToReturn);
+									System.out.println("Welcome back," + c.getName() + "!");
+									validCat = true;
+								}
+							} catch (NumberFormatException nfex) {
+								System.out.println("Invalid cat ID.");
+							} catch (Exception ex) {
+								System.out.println("Invalid cat ID.");
+								sc.next();
 							}
-						} catch (NumberFormatException nfex) {
-							System.out.println("Invalid cat ID.");
-						} catch (Exception ex) {
-							System.out.println("Invalid cat ID.");
-							sc.next();
 						}
-					}
 
-					break;
-				case 4:
-					keepGoing = false;
-					break;
-				default:
-					throw new NumberFormatException();
+						break;
+					case 4:
+						keepGoing = false;
+						break;
+					default:
+						throw new NumberFormatException();
 				}
 			} catch (Exception nfex) {
 				System.err.println("Please enter 1, 2, 3 or 4");
